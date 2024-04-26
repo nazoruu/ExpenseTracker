@@ -3,6 +3,7 @@ from flask import render_template
 from flask import redirect
 from flask import request, jsonify
 from website import db
+from website.datamodel import User
 
 
 auth = Blueprint('auth', __name__)
@@ -14,5 +15,6 @@ def login():
 @auth.route('/logout')
 def logout():
     return redirect('/login')
+
 
 

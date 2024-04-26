@@ -11,3 +11,4 @@ $('.message a').click(function(){
         window.location.href = '/home';
     });
 });
+
