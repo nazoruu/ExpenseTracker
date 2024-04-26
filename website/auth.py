@@ -1,6 +1,8 @@
 from flask import Blueprint
 from flask import render_template
 from flask import redirect
+from flask import request, jsonify
+from website import db
 
 auth = Blueprint('auth', __name__)
 
@@ -12,6 +14,3 @@ def login():
 def logout():
     return redirect('/login')
 
-@auth.route('/sign-up')
-def sign_up():
-    return "<p>Sign-up</p>"
