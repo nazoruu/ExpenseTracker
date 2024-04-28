@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import Blueprint, render_template, redirect, request, url_for, flash, session
 from website import db
 from website.datamodel import User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,6 +14,7 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
+                session['user_id'] = user.id
                 return redirect(url_for('view.home'))
             else:
                 flash('Incorrect password', category='error')
@@ -24,6 +25,7 @@ def login():
 
 @auth.route('/logout')
 def logout():
+    session.pop('user_id', None)
     return redirect('/login')
 
 @auth.route('/login#', methods=['GET', 'POST'])
