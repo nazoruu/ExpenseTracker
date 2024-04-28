@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect
 
 view = Blueprint('view', __name__)
 
@@ -10,7 +10,3 @@ def default():
 @view.route('/home')
 def home():
     return "<p>Home</p>"
-
-@view.route('/budget')
-def budget():
-    return render_template("budget.html")
