@@ -4,44 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Budget Planner</title>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
 <style>
     body {
+        background: #76b852; 
+        background: rgb(141,194,111);
+        background: linear-gradient(90deg, rgba(141,194,111,1) 0%, rgba(118,184,82,1) 50%);
+        font-family: "Roboto", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;  
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         margin: 0;
-        background-color: #f5f5f5;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     }
 
     .container {
-        width: 300px;
+        position: relative;
+        z-index: 1;
+        max-width: 300px;
         margin: 0 auto;
+        background: #FFFFFF;
         padding: 20px;
-        background-color: #fff; 
-        border-radius: 10px; 
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+        text-align: center;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
     }
     
     h2 {
         text-align: center;
         color: #333;
+        margin-bottom: 20px;
     }
     
     label {
         display: block;
         margin-bottom: 5px; 
         color: #666; 
+        font-size: 14px;
     }
 
     input[type="number"] {
+        font-family: "Roboto", sans-serif;
+        outline: 0;
+        background: #f2f2f2;
         width: 100%;
-        padding: 8px;
-        margin: 5px 0 15px;
+        border: 0;
+        margin: 0 0 15px;
+        padding: 15px;
         box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        font-size: 14px;
     }
     
     .category {
@@ -59,42 +71,45 @@
     }
 
     button {
-        display: block;
+        font-family: "Roboto", sans-serif;
+        text-transform: uppercase;
+        outline: 0;
+        background: #4CAF50;
         width: 100%;
-        padding: 10px; 
-        background-color: #4caf50; 
-        color: #fff; 
-        border: none;
-        border-radius: 4px;
-        cursor: pointer; 
-        transition: background-color 0.3s; 
+        border: 0;
+        padding: 15px;
+        color: #FFFFFF;
+        font-size: 14px;
+        -webkit-transition: all 0.3 ease;
+        transition: all 0.3 ease;
+        cursor: pointer;
         margin-top: 15px; 
     }
 
-    button:hover {
-        background-color: #45a049; 
+    button:hover, button:active, button:focus {
+        background: #43A047;
     }
 </style>
 </head>
 <body>
     <div class="container">
         <h2>Budget Planner</h2>
-        <label for="income">Income:</label>
         <form class="budget-form" action="{{ url_for('view.budget') }}" method="POST">
-            <input type="number" id="income" name="income" placeholder="Enter your income">
+            <label for="income">Income:</label>
+            <input type="number" id="income" name="income" placeholder="Enter your income" value="{{ user.amount if user else '' }}">
             <div class="category">
                 <span>Needs:</span>
-                <span id="needs">0</span>
+                <span id="needs">{{ user_budget.budget_needs if user_budget else '0' }}</span>
             </div>
             <div class="category">
                 <span>Wants:</span>
-                <span id="wants">0</span>
+                <span id="wants">{{ user_budget.budget_wants if user_budget else '0' }}</span>
             </div>
             <div class="category">
                 <span>Savings:</span>
-                <span id="savings">0</span>
+                <span id="savings">{{ user_budget.budget_savings if user_budget else '0' }}</span>
             </div>
-            <button type = "submit" id = "update-btn">Update</button>
+            <button type="submit" id="update-btn">Update</button>
         </form>
     </div>
 </body>
