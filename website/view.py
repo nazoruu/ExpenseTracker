@@ -12,9 +12,9 @@ view = Blueprint('view', __name__)
 def base():
     return redirect(url_for('auth.login'))
 
-@view.route('/home')
+'''@view.route('/home')
 def home():
-    return render_template("home.html", user=current_user)
+    return render_template("home.html", user=current_user)'''
 
 @view.route('/budget', methods=['GET', 'POST'])
 def budget(): 
@@ -46,40 +46,46 @@ def budget():
 
 
 
-'''@view.route('/', methods=['GET', 'POST'])
+@view.route('/home', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        # Get form data
-        amount = float(request.form['amount'])
-        date = datetime.strptime(request.form['date'], '%Y-%m-%d')
-        description = request.form['description']
-        category_id = int(request.form['category'])
-        # Create new expense object
-        new_expense = Expense(amount=amount, date=date, description=description, category_id=category_id)
-        
-        # Add to database and commit
-        db.session.add(new_expense)
-        db.session.commit()
-        return redirect('/home')   
-    elif 'budget_amount' in request.form:  # Check if it's a budget form submission
-        # Get form data
-        budget_amount = float(request.form['budget_amount'])
-        category_id = int(request.form['category'])
-        # Create new budget object
-        new_budget = Budget(budget_amount=budget_amount, category_id=category_id)
-            
-        # Add to database and commit
-        db.session.add(new_budget)
-        db.session.commit()
-        return redirect('/home')
-    elif 'category_name' in request.form:  # Check if it's a category form submission
-        # Get category name from form data
-        category_name = request.form['category_name']
-        # Create new category object
-        new_category = Category(name=category_name)
-            
-        # Add to database and commit
-        db.session.add(new_category)
-        db.session.commit()
-        return redirect('/home')
-    return render_template("home.html", user=current_user)'''
+        # Check if it's an expense form submission
+        if 'amount' in request.form:
+            amount = float(request.form.get('amount'))
+            date = datetime.strptime(request.form.get('date'), '%Y-%m-%d')
+            description = request.form.get('description')
+            category_id = int(request.form.get('category'))
+
+            # Fetch user's expense inside the POST request block
+            user_expense = Expense.query.filter_by(user_id=session.get('user_id')).first()
+
+            if user_expense:
+                # Update existing expense
+                user_expense.amount = amount
+                user_expense.date = date
+                user_expense.description = description
+                user_expense.category_id = category_id
+            else:
+                # Create new expense object
+                new_expense = Expense(amount=amount, date=date, description=description, category_id=category_id, user_id=session.get('user_id'))
+                db.session.add(new_expense)
+
+        # Check if it's a category form submission
+        elif 'category_name' in request.form:
+            category_name = request.form.get('category_name')
+            user_categories = Category.query.filter_by(name=category_name, user_id=session.get('user_id')).first()
+
+            if not user_categories:
+                # Create new category object
+                new_category = Category(name=category_name, user_id=session.get('user_id'))
+                db.session.add(new_category)
+                db.session.commit()
+
+        db.session.commit()  # Commit changes after handling both forms
+        return redirect('/home')  # Redirect to refresh the page
+
+    # Fetch user data for display
+    user_expense = Expense.query.filter_by(user_id=session.get('user_id')).first()
+    user_categories = Category.query.filter_by(user_id=session.get('user_id')).all()
+
+    return render_template("home.html", user=current_user, user_expense=user_expense, user_categories=user_categories)
